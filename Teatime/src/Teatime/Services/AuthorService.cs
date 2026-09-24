@@ -86,7 +86,7 @@ public sealed class AuthorService
         var authors = new List<Author>();
         if (!Directory.Exists(dir)) return authors;
 
-        foreach (var file in Directory.GetFiles(dir, "*.md").Order())
+        foreach (var file in Directory.GetFiles(dir, "*.md").Where(f => new FileInfo(f).LinkTarget is null).Order())
         {
             var text = File.ReadAllText(file);
             var fm = ParseFrontMatter(text);

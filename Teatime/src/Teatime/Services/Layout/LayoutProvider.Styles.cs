@@ -2503,7 +2503,7 @@ public static partial class LayoutProvider
 {themeComponentCss}
 "));
 
-    private static string MinifyCss(string css) =>
+    internal static string MinifyCss(string css) =>
         System.Text.RegularExpressions.Regex.Replace(
             System.Text.RegularExpressions.Regex.Replace(css, @"/\*[\s\S]*?\*/", ""),
             @"[ \t]*[\r\n]+[ \t]*|[ \t]{2,}", " ").Trim();

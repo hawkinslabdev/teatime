@@ -265,7 +265,7 @@ public sealed partial class ContentService : IHostedService, IExtensionSource, I
         _bookmarks?.Configure(config?.Bookmarks);
 
         // Sorted for deterministic hashing, regardless of FS enumeration order.
-        var allFiles = Directory.GetFiles(docsPath, "*.md", SearchOption.AllDirectories).Order().ToArray();
+        var allFiles = Directory.GetFiles(docsPath, "*.md", ContentLinks.NoLinks).Order().ToArray();
         var pages = new List<DocumentationPage>();
         var pageMap = new Dictionary<string, DocumentationPage>();
         var hashInput = new StringBuilder();
