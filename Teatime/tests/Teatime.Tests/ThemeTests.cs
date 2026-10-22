@@ -344,6 +344,35 @@ public sealed partial class ThemeCssIntegrityTests
         Assert.Contains("<style nonce=\"n0nce\">", css, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void OverrideCss_PrimaryColor_SetsAccentInPlainRoot()
+    {
+        var css = Teatime.Services.ThemeProvider.BuildThemeCss(new ThemeOptions { PrimaryColor = "#abc" });
+
+        Assert.Contains("<style>\n:root {\n    --primary-color: #abc;\n    --accent: #abc;\n}\n</style>", css, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void OverrideCss_DarkValues_MirrorTheThemesDarkSelectors()
+    {
+        var css = Teatime.Services.ThemeProvider.BuildThemeCss(
+            new ThemeOptions { PrimaryColorDark = "#def", AccentLightDark = "#123" });
+
+        const string vars = "    --primary-color: #def;\n    --accent: #def;\n    --accent-light: #123;\n}\n";
+        Assert.Contains("@media (prefers-color-scheme: dark) {\n:root:not([data-theme=\"light\"]) {\n" + vars + "}\n", css, StringComparison.Ordinal);
+        Assert.Contains(":root[data-theme=\"dark\"] {\n" + vars, css, StringComparison.Ordinal);
+        Assert.DoesNotContain("<style>\n:root {", css, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void OverrideCss_DarkValues_DroppedWhenSiteIsLightOnly()
+    {
+        var css = Teatime.Services.ThemeProvider.BuildThemeCss(
+            new ThemeOptions { PrimaryColorDark = "#def", DarkMode = false });
+
+        Assert.Equal(string.Empty, css);
+    }
+
     private static string Render(ITeatimeTheme theme, string? nonce = null) =>
         LayoutProvider.GetLayout(title: "Test", content: "<p>body</p>", nonce: nonce, theme: theme);
 
