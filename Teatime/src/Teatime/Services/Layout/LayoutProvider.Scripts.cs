@@ -57,6 +57,9 @@ public static partial class LayoutProvider
         return MinifyJs($@"
         {themeSyncScript}
         document.addEventListener('DOMContentLoaded', function() {{
+            function teatimeCopy(text) {{
+                return Promise.resolve().then(function() {{ return navigator.clipboard.writeText(text); }});
+            }}
             var scrollIndicator = document.getElementById('scroll-indicator');
             var themeToggle = document.getElementById('theme-toggle');
 
@@ -447,7 +450,7 @@ public static partial class LayoutProvider
                 document.addEventListener('keydown', function(e) {{ if (!shareOverlay.hidden && e.key === 'Escape') closeShare(); }});
                 if (shareCopy) {{
                     shareCopy.addEventListener('click', function() {{
-                        navigator.clipboard.writeText(location.href).then(function() {{
+                        teatimeCopy(location.href).then(function() {{
                             if (shareCopyLabel) {{
                                 shareCopyLabel.textContent = 'Copied';
                                 setTimeout(function() {{ shareCopyLabel.textContent = 'Copy link'; }}, 1800);
@@ -854,6 +857,16 @@ public static partial class LayoutProvider
                 var buttons = document.createElement('div');
                 buttons.className = 'code-block-buttons';
 
+                var copyStatus = document.createElement('span');
+                copyStatus.className = 'sr-only';
+                copyStatus.setAttribute('role', 'status');
+                wrapper.appendChild(copyStatus);
+                function announceCopy(message) {{
+                    copyStatus.textContent = '';
+                    setTimeout(function() {{ copyStatus.textContent = message; }}, 50);
+                    setTimeout(function() {{ copyStatus.textContent = ''; }}, 2000);
+                }}
+
                 var iconCopy = '<svg xmlns=""http://www.w3.org/2000/svg"" width=""17"" height=""17"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" aria-hidden=""true""><rect width=""14"" height=""14"" x=""8"" y=""8"" rx=""2"" ry=""2""/><path d=""M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2""/></svg>';
                 var iconCheck = '<svg xmlns=""http://www.w3.org/2000/svg"" width=""17"" height=""17"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2.5"" stroke-linecap=""round"" stroke-linejoin=""round"" aria-hidden=""true""><path d=""M20 6 9 17l-5-5""/></svg>';
                 var iconX = '<svg xmlns=""http://www.w3.org/2000/svg"" width=""17"" height=""17"" viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" stroke-linejoin=""round"" aria-hidden=""true""><path d=""M18 6 6 18""/><path d=""m6 6 12 12""/></svg>';
@@ -907,10 +920,12 @@ public static partial class LayoutProvider
                 copyBtn.setAttribute('aria-label', 'Copy code');
                 copyBtn.setAttribute('title', 'Copy code');
                 copyBtn.addEventListener('click', function() {{
-                    navigator.clipboard.writeText(codeText()).then(function() {{
+                    teatimeCopy(codeText()).then(function() {{
                         flash(copyBtn, iconCopy, iconCheck, 'copied');
+                        announceCopy('Copied!');
                     }})['catch'](function() {{
                         flash(copyBtn, iconCopy, iconX, 'failed');
+                        announceCopy('Copy failed');
                     }});
                 }});
                 buttons.appendChild(copyBtn);
@@ -1125,7 +1140,7 @@ public static partial class LayoutProvider
                         btn.classList.add('loading');
                         fetch(btn.getAttribute('data-copy-url'))
                             .then(function(r) {{ if (!r.ok) throw new Error(); return r.text(); }})
-                            .then(function(text) {{ return navigator.clipboard.writeText(text); }})
+                            .then(teatimeCopy)
                             .then(function() {{ btn.classList.remove('loading'); showCopied(btn, savedHtml); }})
                             ['catch'](function() {{ btn.classList.remove('loading'); showError(btn, savedHtml); }});
                     }});
@@ -1135,7 +1150,7 @@ public static partial class LayoutProvider
                     btn.addEventListener('click', function() {{
                         var savedHtml = btn.innerHTML;
                         var value = new URL(btn.getAttribute('data-copy-value'), window.location.href).href;
-                        navigator.clipboard.writeText(value)
+                        teatimeCopy(value)
                             .then(function() {{ showCopied(btn, savedHtml); }})
                             ['catch'](function() {{ showError(btn, savedHtml); }});
                     }});
