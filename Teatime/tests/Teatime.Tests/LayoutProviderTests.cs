@@ -16,6 +16,14 @@ public sealed class LayoutProviderTests
     }
 
     [Fact]
+    public void GetLayout_SearchIsNativeModalDialog()
+    {
+        var html = LayoutProvider.GetLayout("Title", "<p>x</p>", null);
+
+        Assert.Contains("<dialog class=\"search-modal\" id=\"search-modal\"", html);
+    }
+
+    [Fact]
     public void GetLayout_ContainsContent()
     {
         var html = LayoutProvider.GetLayout(

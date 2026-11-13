@@ -194,28 +194,26 @@ public static partial class LayoutProvider
             position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
             overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
         }}
-        .search-overlay {{
-            position: fixed; inset: 0; z-index: 1200;
-            background-color: var(--overlay-bg);
-            display: flex; align-items: center; justify-content: center;
-            padding: 1.5rem; opacity: 0; transition: opacity 0.15s ease;
-        }}
-        .search-overlay[hidden] {{
-            display: none;
-        }}
-        .search-overlay.open {{
-            opacity: 1;
-        }}
         .search-modal {{
-            width: 100%; max-width: 720px; max-height: 80vh;
-            background-color: var(--bg-color); border: 1px solid var(--border); border-radius: 12px;
+            width: calc(100% - 3rem); max-width: 720px; max-height: 80vh; margin: auto; padding: 0;
+            color: var(--text-color); background-color: var(--bg-color); border: 1px solid var(--border); border-radius: 12px;
             box-shadow: var(--shadow-lg);
-            display: flex; flex-direction: column; overflow: hidden;
-            transform: translateY(-12px) scale(0.98);
-            transition: transform 0.15s ease;
+            flex-direction: column; overflow: hidden; overscroll-behavior: contain;
         }}
-        .search-overlay.open .search-modal {{
-            transform: translateY(0) scale(1);
+        .search-modal[open] {{
+            display: flex;
+            animation: search-modal-in 0.15s ease;
+        }}
+        .search-modal::backdrop {{
+            background-color: var(--overlay-bg);
+            overflow: hidden; overscroll-behavior: contain;
+            animation: search-backdrop-in 0.15s ease;
+        }}
+        @keyframes search-modal-in {{
+            from {{ opacity: 0; transform: translateY(-12px) scale(0.98); }}
+        }}
+        @keyframes search-backdrop-in {{
+            from {{ opacity: 0; }}
         }}
         .search-modal-header {{
             display: flex; align-items: center; gap: 0.75rem;
@@ -230,6 +228,13 @@ public static partial class LayoutProvider
         .search-modal-input {{
             flex: 1; min-width: 0; border: none; outline: none; background: transparent;
             color: var(--text-color); font-size: 1.05rem; font-family: var(--font-sans);
+        }}
+        .search-modal-input::-webkit-search-cancel-button {{
+            -webkit-appearance: none;
+            appearance: none;
+        }}
+        .search-modal-header:focus-within {{
+            box-shadow: inset 0 -2px 0 var(--accent);
         }}
         .search-modal-close {{
             flex-shrink: 0;
@@ -318,14 +323,14 @@ public static partial class LayoutProvider
                 width: 44px;
                 height: 44px;
             }}
-            .search-overlay {{
-                padding: 0;
-            }}
             .search-modal {{
+                width: 100%;
                 max-width: 100%;
                 max-height: 100%;
                 height: 100%;
                 height: 100dvh;
+                margin: 0;
+                border: 0;
                 border-radius: 0;
             }}
             .DocSearch-Commands {{

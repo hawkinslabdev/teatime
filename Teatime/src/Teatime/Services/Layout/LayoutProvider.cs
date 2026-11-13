@@ -149,8 +149,7 @@ public static partial class LayoutProvider
         <a class=""brand"" href=""{homeHref}"">{brandMarkHtml}{brandText ?? "Teatime"}</a>
         {siteNavHtml}
     </header>
-    <div class=""search-overlay"" id=""search-overlay"" hidden>
-        <div class=""search-modal"" id=""search-modal"" role=""dialog"" aria-modal=""true"" aria-labelledby=""search-modal-label"">
+    <dialog class=""search-modal"" id=""search-modal"" aria-labelledby=""search-modal-label"" closedby=""any"">
             <h2 id=""search-modal-label"" class=""sr-only"">{HtmlEncode(l.SearchHeading)}</h2>
             <div class=""search-modal-header"">
                 <svg viewBox=""0 0 24 24"" fill=""none"" stroke=""currentColor"" stroke-width=""2"" stroke-linecap=""round"" aria-hidden=""true""><circle cx=""11"" cy=""11"" r=""7""/><path d=""M21 21l-4.3-4.3""/></svg>
@@ -179,8 +178,7 @@ public static partial class LayoutProvider
                     <span aria-label=""Escape key"" class=""DocSearch-Label"">{HtmlEncode(l.SearchEsc)}</span>
                 </li>
             </ul>
-        </div>
-    </div>
+    </dialog>
     {shareOverlayHtml}
     {subscribeOverlayHtml}
     <main class=""main-container"" id=""main-content"" tabindex=""-1"">
