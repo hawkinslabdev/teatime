@@ -638,7 +638,7 @@ public static partial class LayoutProvider
             function escapeHtml(value) {{
                 var div = document.createElement('div');
                 div.textContent = value == null ? '' : value;
-                return div.innerHTML;
+                return div.innerHTML.replace(/""/g, '&quot;');
             }}
 
             function escapeRegExp(value) {{
