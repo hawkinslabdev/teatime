@@ -802,10 +802,13 @@ public static partial class LayoutProvider
             margin: 1.5rem 0;
         }}
         .prose .teatime-code-group .tabs {{
-            display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border);
+            position: relative; display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border);
         }}
         .prose .teatime-code-group .tabs input {{
-            display: none;
+            position: absolute; opacity: 0; pointer-events: none;
+        }}
+        .prose .teatime-code-group .tabs input:focus-visible + label {{
+            outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px;
         }}
         .prose .teatime-code-group .tabs label {{
             display: inline-flex; align-items: center; gap: 0.35rem;
