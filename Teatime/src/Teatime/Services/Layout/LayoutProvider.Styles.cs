@@ -838,7 +838,7 @@ public static partial class LayoutProvider
             border-bottom-color: var(--accent);
         }}
         .table-wrapper {{
-            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            overflow-x: auto;
             margin: 1.5rem 0; border-radius: 6px;
         }}
         .task-list-item input[type=""checkbox""] {{
