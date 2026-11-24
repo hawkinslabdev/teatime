@@ -6,7 +6,7 @@
 
 Meet Teatime: a personal blog engine that's really just a folder of Markdown files. If you can write a `.md` file, you already have a fast, self-hosted blog with tags, an archive, and an RSS feed, ready to go.
 
-Teatime is built on the modern .NET stack, growing out of [Bark](https://github.com/hawkinslabdev/bark), a fast Markdown documentation server. It inherits what Bark is good at: building pages in-memory. That means you can publish posts directly, with no build step and no extra dependencies.
+Teatime is built on the modern .NET stack, allowing you to quickly compose a site from simple configuration files which builds pages in-memory. That means you can publish posts directly, with no build step and no extra dependencies.
 
 <div>
       <p align="center"><strong>🔍 <a href="https://hawkinslabdev.github.io/teatime/">See it in action!</a></strong></p>
