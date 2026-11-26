@@ -1629,45 +1629,75 @@ public static partial class LayoutProvider
         .post-nav {{
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 2rem;
             margin-top: 4rem;
-            padding-top: 1.5rem;
+            padding-top: 1.75rem;
             border-top: 1px solid var(--border);
         }}
         .content .post-nav-link {{
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
-            padding: 0.9rem 1.1rem;
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            gap: 0.4rem;
+            min-width: 0;
             text-decoration: none;
-            transition: border-color 0.15s ease, background-color 0.15s ease;
+            border-radius: 4px;
         }}
-        .post-nav-link:hover {{
-            border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
-            background-color: var(--accent-light);
+        .post-nav-link:focus-visible {{
+            outline-offset: 6px;
         }}
         .post-nav-newer {{
             text-align: right;
             align-items: flex-end;
         }}
         .post-nav-label {{
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            text-decoration: none;
+            transition: color 0.2s ease;
+        }}
+        .post-nav-arrow {{
+            width: 0.95em;
+            height: 0.95em;
+            flex: none;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }}
         .post-nav-title {{
             font-family: var(--font-display);
             font-weight: 600;
-            font-size: 0.95rem;
-            line-height: 1.25;
+            font-size: 1.15rem;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
             color: var(--text-color);
+            text-wrap: balance;
+            text-decoration: underline;
+            text-decoration-color: transparent;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.25em;
+            transition: color 0.2s ease, text-decoration-color 0.2s ease;
         }}
-        .post-nav-link:hover .post-nav-title {{
+        .post-nav-link:hover .post-nav-label,
+        .post-nav-link:focus-visible .post-nav-label {{
             color: var(--accent);
+        }}
+        .post-nav-link:hover .post-nav-title,
+        .post-nav-link:focus-visible .post-nav-title {{
+            text-decoration-color: color-mix(in srgb, var(--accent) 60%, transparent);
+        }}
+        .post-nav-older:hover .post-nav-arrow {{
+            transform: translateX(-3px);
+        }}
+        .post-nav-newer:hover .post-nav-arrow {{
+            transform: translateX(3px);
+        }}
+        @media (prefers-reduced-motion: reduce) {{
+            .post-nav-arrow {{ transition: none; }}
         }}
         .page-header {{
             margin: 0 0 2.75rem;
@@ -2332,6 +2362,7 @@ public static partial class LayoutProvider
             }}
             .post-nav {{
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }}
             .post-nav > span:empty {{
                 display: none;

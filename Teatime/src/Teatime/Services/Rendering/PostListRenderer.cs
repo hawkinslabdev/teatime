@@ -218,16 +218,21 @@ public static partial class PostListRenderer
             newer is not null ? UrlPaths.Href(basePath, newer.Url) : null, newer?.Title,
             Localization.Current.PostNavAria);
 
+    private const string NavArrowLeft =
+        "<svg class=\"post-nav-arrow\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M13 8H3M7 4 3 8l4 4\"/></svg>";
+    private const string NavArrowRight =
+        "<svg class=\"post-nav-arrow\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 8h10M9 4l4 4-4 4\"/></svg>";
+
     public static string BuildAdjacentNav(string? prevHref, string? prevTitle, string? nextHref, string? nextTitle, string ariaLabel)
     {
         if (prevHref is null && nextHref is null) return string.Empty;
 
         var l = Localization.Current;
         var olderHtml = prevHref is not null
-            ? $"<a class=\"post-nav-link post-nav-older\" rel=\"prev\" href=\"{prevHref}\"><span class=\"post-nav-label\">← {LayoutProvider.HtmlEncode(l.PostNavPrevious)}</span><span class=\"post-nav-title\">{LayoutProvider.HtmlEncode(prevTitle)}</span></a>"
+            ? $"<a class=\"post-nav-link post-nav-older\" rel=\"prev\" href=\"{prevHref}\"><span class=\"post-nav-label\">{NavArrowLeft}{LayoutProvider.HtmlEncode(l.PostNavPrevious)}</span><span class=\"post-nav-title\">{LayoutProvider.HtmlEncode(prevTitle)}</span></a>"
             : "<span></span>";
         var newerHtml = nextHref is not null
-            ? $"<a class=\"post-nav-link post-nav-newer\" rel=\"next\" href=\"{nextHref}\"><span class=\"post-nav-label\">{LayoutProvider.HtmlEncode(l.PostNavNext)} →</span><span class=\"post-nav-title\">{LayoutProvider.HtmlEncode(nextTitle)}</span></a>"
+            ? $"<a class=\"post-nav-link post-nav-newer\" rel=\"next\" href=\"{nextHref}\"><span class=\"post-nav-label\">{LayoutProvider.HtmlEncode(l.PostNavNext)}{NavArrowRight}</span><span class=\"post-nav-title\">{LayoutProvider.HtmlEncode(nextTitle)}</span></a>"
             : "<span></span>";
 
         return $"<nav class=\"post-nav\" aria-label=\"{LayoutProvider.HtmlEncode(ariaLabel)}\">{olderHtml}{newerHtml}</nav>";
