@@ -21,7 +21,7 @@ A paragraph should carry its weight. It can hold a [link](https://github.com/haw
 
 ## Media
 
-Images sit in a figure and borrow their caption from the alt text, so a screenshot always arrives with a label.
+Images are positioned in a figure and inherit their caption from the alt text, so a screenshot always arrives with a label.
 
 ![A cup of tea resting on a wooden table](/assets/tea.webp)
 
