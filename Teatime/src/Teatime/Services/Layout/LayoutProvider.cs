@@ -127,7 +127,7 @@ public static partial class LayoutProvider
     {themeCss}
     {customAssetsHtml}
     {(hasMath ? $"<link rel=\"stylesheet\" href=\"{basePath}/css/katex.min.css\">" : "")}
-    {(hasMermaid ? $"<script defer src=\"{basePath}/js/mermaid.min.js\"></script>" : "")}
+    {(hasMermaid ? $"<script defer src=\"{basePath}/js/mermaid.min.js\"></script><noscript><style>.mermaid:not([data-processed]){{visibility:visible}}</style></noscript>" : "")}
     {(hasMap ? $"<link rel=\"stylesheet\" href=\"{basePath}/css/leaflet.css\"><script defer src=\"{basePath}/js/leaflet.js\"></script>" : "")}
 </head>
 <body>

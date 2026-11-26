@@ -44,6 +44,7 @@ public static partial class LayoutProvider
                 });
             });
             syncThemeToggle();
+            document.dispatchEvent(new Event('teatime-theme-change'));
         }
         window.addEventListener('pageshow', function(e) {
             if (e.persisted) applyStoredTheme();
@@ -94,11 +95,7 @@ public static partial class LayoutProvider
                         try {{ localStorage.setItem('teatime-theme', next); }} catch (e) {{}}
                     }}
                     themeToggle.setAttribute('aria-checked', String(next === 'dark'));
-
-                    // Mermaid bakes theme colors into its SVG at render time; reload to re-render.
-                    if (document.querySelector('.mermaid')) {{
-                        location.reload();
-                    }}
+                    document.dispatchEvent(new Event('teatime-theme-change'));
                 }});
             }}
 
@@ -831,14 +828,6 @@ public static partial class LayoutProvider
                 }}, 200);
             }});
 
-            // Wrap wide tables in scroll container; overflow-x:auto on table itself doesn't reliably contain it.
-            var tables = document.querySelectorAll('.content table');
-            tables.forEach(function(table) {{
-                var wrapper = document.createElement('div');
-                wrapper.className = 'table-wrapper';
-                table.parentNode.insertBefore(wrapper, table);
-                wrapper.appendChild(table);
-            }});
 
 
             var codeBlocks = document.querySelectorAll('.content pre');
@@ -955,66 +944,82 @@ public static partial class LayoutProvider
             var codeGroups = document.querySelectorAll('.teatime-code-group');
             codeGroups.forEach(function(group) {{
                 var inputs = group.querySelectorAll('.tabs input');
-                var labels = group.querySelectorAll('.tabs label');
                 var blocks = group.querySelectorAll('.blocks > [class^=""language-""]');
                 inputs.forEach(function(input, index) {{
                     input.addEventListener('change', function() {{
                         blocks.forEach(function(block, blockIndex) {{
                             block.classList.toggle('active', blockIndex === index);
                         }});
-                        labels.forEach(function(label, labelIndex) {{
-                            label.classList.toggle('active-tab', labelIndex === index);
-                        }});
                     }});
-                    if (input.checked) labels[index] && labels[index].classList.add('active-tab');
                 }});
             }});
 
             // Mermaid ignores CSS variables, so the theme's tokens are read once and passed in.
             var mermaidBlocks = document.querySelectorAll('.mermaid');
             if (mermaidBlocks.length && window.mermaid) {{
-                var currentTheme = document.documentElement.getAttribute('data-theme');
-                var prefersDarkNow = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                var mermaidIsDark = currentTheme ? currentTheme === 'dark' : prefersDarkNow;
                 var rootStyle = getComputedStyle(document.documentElement);
+                var mermaidPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+                var mermaidRenderCount = 0;
                 function themeToken(name) {{ return rootStyle.getPropertyValue(name).trim(); }}
-                window.mermaid.initialize({{
-                    theme: 'base',
-                    themeVariables: {{
-                        darkMode: mermaidIsDark,
-                        fontFamily: themeToken('--font-sans'),
-                        background: themeToken('--bg-color'),
-                        primaryColor: themeToken('--accent-light'),
-                        primaryTextColor: themeToken('--text-color'),
-                        primaryBorderColor: themeToken('--accent'),
-                        secondaryColor: themeToken('--code-bg'),
-                        tertiaryColor: themeToken('--sidebar-bg'),
-                        mainBkg: themeToken('--accent-light'),
-                        nodeBorder: themeToken('--accent'),
-                        clusterBkg: themeToken('--sidebar-bg'),
-                        clusterBorder: themeToken('--border'),
-                        lineColor: themeToken('--text-muted'),
-                        textColor: themeToken('--text-color'),
-                        titleColor: themeToken('--text-color'),
-                        edgeLabelBackground: themeToken('--bg-color'),
-                        noteBkgColor: themeToken('--code-bg'),
-                        noteTextColor: themeToken('--text-color'),
-                        noteBorderColor: themeToken('--border'),
-                        // Alert hues, not accent tints: slices derived from one accent are indistinguishable.
-                        pie1: themeToken('--accent'),
-                        pie2: themeToken('--alert-note'),
-                        pie3: themeToken('--alert-tip'),
-                        pie4: themeToken('--alert-warning'),
-                        pie5: themeToken('--alert-important'),
-                        pie6: themeToken('--alert-caution'),
-                        pieStrokeColor: themeToken('--bg-color'),
-                        pieOuterStrokeColor: themeToken('--border'),
-                        pieSectionTextColor: themeToken('--bg-color'),
-                        pieTitleTextColor: themeToken('--text-color'),
-                        pieLegendTextColor: themeToken('--text-color')
-                    }}
-                }});
+                function initMermaid() {{
+                    var currentTheme = document.documentElement.getAttribute('data-theme');
+                    window.mermaid.initialize({{
+                        startOnLoad: false,
+                        theme: 'base',
+                        themeVariables: {{
+                            darkMode: currentTheme ? currentTheme === 'dark' : mermaidPrefersDark.matches,
+                            fontFamily: themeToken('--font-sans'),
+                            background: themeToken('--bg-color'),
+                            primaryColor: themeToken('--accent-light'),
+                            primaryTextColor: themeToken('--text-color'),
+                            primaryBorderColor: themeToken('--accent'),
+                            secondaryColor: themeToken('--code-bg'),
+                            tertiaryColor: themeToken('--sidebar-bg'),
+                            mainBkg: themeToken('--accent-light'),
+                            nodeBorder: themeToken('--accent'),
+                            clusterBkg: themeToken('--sidebar-bg'),
+                            clusterBorder: themeToken('--border'),
+                            lineColor: themeToken('--text-muted'),
+                            textColor: themeToken('--text-color'),
+                            titleColor: themeToken('--text-color'),
+                            edgeLabelBackground: themeToken('--bg-color'),
+                            noteBkgColor: themeToken('--code-bg'),
+                            noteTextColor: themeToken('--text-color'),
+                            noteBorderColor: themeToken('--border'),
+                            // Alert hues, not accent tints: slices derived from one accent are indistinguishable.
+                            pie1: themeToken('--accent'),
+                            pie2: themeToken('--alert-note'),
+                            pie3: themeToken('--alert-tip'),
+                            pie4: themeToken('--alert-warning'),
+                            pie5: themeToken('--alert-important'),
+                            pie6: themeToken('--alert-caution'),
+                            pieStrokeColor: themeToken('--bg-color'),
+                            pieOuterStrokeColor: themeToken('--border'),
+                            pieSectionTextColor: themeToken('--bg-color'),
+                            pieTitleTextColor: themeToken('--text-color'),
+                            pieLegendTextColor: themeToken('--text-color')
+                        }}
+                    }});
+                }}
+                // Mermaid bakes colors into its SVG: re-render in place on every theme change instead of reloading.
+                function rerenderMermaid() {{
+                    initMermaid();
+                    mermaidBlocks.forEach(function(block) {{
+                        var id = 'teatime-mermaid-' + (mermaidRenderCount++);
+                        window.mermaid.render(id, block.getAttribute('data-teatime-source')).then(function(result) {{
+                            block.innerHTML = result.svg;
+                            if (result.bindFunctions) result.bindFunctions(block);
+                        }})['catch'](function() {{
+                            var stray = document.getElementById('d' + id);
+                            if (stray) stray.remove();
+                        }});
+                    }});
+                }}
+                mermaidBlocks.forEach(function(block) {{ block.setAttribute('data-teatime-source', block.textContent); }});
+                initMermaid();
                 window.mermaid.run();
+                document.addEventListener('teatime-theme-change', rerenderMermaid);
+                mermaidPrefersDark.addEventListener('change', rerenderMermaid);
             }}
 
             // Self-hosted Leaflet maps. Tiles from OpenStreetMap; popups built via textContent (no HTML injection).

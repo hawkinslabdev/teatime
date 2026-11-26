@@ -838,7 +838,10 @@ public static partial class LayoutProvider
         .prose .teatime-code-group .blocks > div[class^=""language-""].active {{
             display: block;
         }}
-        .prose .teatime-code-group .tabs label.active-tab {{
+        .mermaid:not([data-processed]) {{
+            visibility: hidden;
+        }}
+        .prose .teatime-code-group .tabs input:checked + label {{
             color: var(--text-color);
             border-bottom-color: var(--accent);
         }}
