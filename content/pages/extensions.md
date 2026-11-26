@@ -30,6 +30,7 @@ The following extensions are supported:
 | [GoatCounter](#analytics) | Analytics, hosted or self-hosted | `url` |
 | [Liwan](#analytics) | Analytics, self-hosted | `url`, `entity` |
 | [Umami](#analytics) | Analytics, hosted or self-hosted | `url`, `websiteId` |
+| [Custom code](#custom-code) | Any script, head or footer | `head` or `footer` |
 
 Extensions are disabled by default. To enable an extension, set `enabled` to true and make sure its settings pass validation.
 
@@ -343,4 +344,29 @@ Cookies are worth a thought before you publish. Plausible, Medama, GoatCounter a
 
 ::: Warning
 Each verified origin is folded into the page's `script-src`, `connect-src`, and `img-src` automatically, and the tracker tags carry the same nonce as the rest of the page. If you override `Docs:ContentSecurityPolicy` in `appsettings.json`, your policy is widened the same way.
+:::
+
+## Custom code
+
+For a service without a built-in extension, `custom` places your own HTML on every page: `head` goes at the end of the page head, `footer` after the site footer.
+
+```json [content/extensions.json]
+{
+  "extensions": {
+    "custom": {
+      "enabled": true,
+      "head": "<script defer src='https://stats.example.com/script.js' data-site='blog'></script>",
+      "footer": "<script>console.log('loaded')</script>",
+      "sources": ["https://stats.example.com"]
+    }
+  }
+}
+```
+
+Every `<script>` and `<style>` tag in it gets the page's nonce, so inline code runs under the Content Security Policy without loosening it. List each outside origin the code loads from or sends data to in `sources`; those are added to `script-src`, `connect-src` and `img-src`. Anything not listed is still blocked by the browser.
+
+Single quotes inside the HTML save escaping every double quote in the JSON.
+
+::: Warning
+This HTML goes out unfiltered. Treat `extensions.json` like code: only paste snippets from services you trust.
 :::

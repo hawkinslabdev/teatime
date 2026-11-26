@@ -158,7 +158,7 @@ public sealed class BlogPageResponder
             rssDiscoveryHtml: rssDiscoveryHtml,
             isArticle: view.IsArticle,
             siteNavHtml: siteNavHtml,
-            footerHtml: footerHtml,
+            footerHtml: footerHtml + ExtensionHeadRenderer.BuildFooter(extensions, nonce),
             pageId: seg.Length == 0 ? "home" : seg.Replace('/', '-'),
             // User theme assets load last so custom.css overrides engine styles at equal specificity.
             customAssetsHtml: customCssLink + customJsScript,

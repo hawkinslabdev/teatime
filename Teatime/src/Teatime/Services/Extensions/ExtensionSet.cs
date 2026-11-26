@@ -10,10 +10,14 @@ public sealed record ExtensionScript(
 
 /// <summary>An extension that was enabled and passed verification.</summary>
 /// <param name="CspSources">Origins the scripts talk to; widened into script-src, connect-src and img-src.</param>
+/// <param name="HeadHtml">Author-written HTML for the end of head; its script and style tags get the page nonce.</param>
+/// <param name="FooterHtml">Author-written HTML placed after the site footer, nonced the same way.</param>
 public sealed record ActiveExtension(
     string Name,
     IReadOnlyList<ExtensionScript> Scripts,
-    IReadOnlyList<string> CspSources);
+    IReadOnlyList<string> CspSources,
+    string? HeadHtml = null,
+    string? FooterHtml = null);
 
 /// <summary>Whoever owns the current extension set. Implemented by ContentService.</summary>
 public interface IExtensionSource

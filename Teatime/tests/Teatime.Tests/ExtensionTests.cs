@@ -178,6 +178,25 @@ public sealed class ExtensionLoaderTests : IDisposable
     }
 
     [Fact]
+    public void Custom_WithHeadAndSources_Activates()
+    {
+        var set = Load("""
+            { "extensions": { "custom": { "enabled": true, "head": "<script src='https://stats.example.com/s.js'></script>", "sources": ["https://stats.example.com/x"] } } }
+            """);
+
+        var extension = Assert.Single(set.Active);
+        Assert.Equal(["https://stats.example.com"], extension.CspSources);
+    }
+
+    [Theory]
+    [InlineData("\"sources\": [\"https://a.example.com\"]")]                          // no head or footer
+    [InlineData("\"head\": \"<script></script>\", \"sources\": [\"javascript:x\"]")]    // bad source
+    public void Custom_WithBadSettings_StaysInactive(string settings)
+    {
+        Assert.True(Load($$"""{ "extensions": { "custom": { "enabled": true, {{settings}} } } }""").IsEmpty);
+    }
+
+    [Fact]
     public void GoatCounter_WithUrl_Activates()
     {
         var set = Load("""
@@ -518,6 +537,20 @@ public sealed class ExtensionHeadRendererTests
 
         Assert.Contains("<script nonce=\"n0nce\" defer src=\"https://plausible.io/js/script.js\" data-domain=\"blog.example.com\">", html);
         Assert.Contains("</script>", html);
+    }
+
+    [Fact]
+    public void CustomHtml_GetsNonceOnScriptAndStyleTags()
+    {
+        var set = new ExtensionSet([
+            new ActiveExtension("custom", [], [],
+                HeadHtml: "<script src='a.js'></script><STYLE>b{}</STYLE><script nonce=\"x\"></script>",
+                FooterHtml: "<script>c()</script><scripts-not>")
+        ]);
+
+        Assert.Equal("<script nonce=\"n\" src='a.js'></script><STYLE nonce=\"n\">b{}</STYLE><script nonce=\"x\"></script>\n",
+            ExtensionHeadRenderer.Build(set, "n").ReplaceLineEndings("\n"));
+        Assert.Equal("<script nonce=\"n\">c()</script><scripts-not>\n", ExtensionHeadRenderer.BuildFooter(set, "n"));
     }
 
     [Fact]

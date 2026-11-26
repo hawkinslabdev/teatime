@@ -17,6 +17,7 @@ public sealed class ExtensionsSection
     public GoatCounterOptions? GoatCounter { get; set; }
     public LiwanOptions? Liwan { get; set; }
     public UmamiOptions? Umami { get; set; }
+    public CustomCodeOptions? Custom { get; set; }
     public Remark42Options? Remark42 { get; set; }
     public BeaconOptions? Beacon { get; set; }
     public ListmonkOptions? Listmonk { get; set; }
@@ -201,4 +202,19 @@ public sealed class UmamiOptions
 
     /// <summary>Also load <c>recorder.js</c> for session replays and heatmaps (Umami 3.1+).</summary>
     public bool Recorder { get; set; }
+}
+
+/// <summary>Raw HTML injected into every page, for services without a built-in extension.</summary>
+public sealed class CustomCodeOptions
+{
+    public bool Enabled { get; set; }
+
+    /// <summary>HTML placed at the end of <c>head</c>.</summary>
+    public string? Head { get; set; }
+
+    /// <summary>HTML placed after the site footer, before the closing <c>body</c>.</summary>
+    public string? Footer { get; set; }
+
+    /// <summary>Origins the code loads from or talks to, e.g. <c>https://stats.example.com</c>; added to the page's CSP.</summary>
+    public List<string>? Sources { get; set; }
 }
