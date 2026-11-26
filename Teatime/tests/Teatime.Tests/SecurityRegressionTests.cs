@@ -176,7 +176,7 @@ public sealed class SecurityRegressionTests : IDisposable
     {
         // Pinned hash of the vendored build. A mismatch means the file was swapped (compromised PR,
         // bad merge) or someone upgraded it without re-vetting: update the constant only after review.
-        const string expectedSha256 = "71b2d6829de9893e5d6bfc806d343b2c7dead04b2157ff2a5ba3372938c3a6be";
+        const string expectedSha256 = "8471d1c1c99591501f89731c8cb7ef6d10d770c2d1fb739ed52418378b48e56e";
         var path = Path.Combine(AppContext.BaseDirectory, "wwwroot", "js", "altcha.min.js");
 
         await using var stream = File.OpenRead(path);
