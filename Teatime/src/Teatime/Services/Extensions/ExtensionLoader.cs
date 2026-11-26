@@ -67,6 +67,7 @@ public static partial class ExtensionLoader
         AddIfVerified(active, BuildMedama(section.Medama, rejects));
         AddIfVerified(active, BuildGoatCounter(section.GoatCounter, rejects));
         AddIfVerified(active, BuildLiwan(section.Liwan, rejects));
+        AddIfVerified(active, BuildUmami(section.Umami, rejects));
 
         var newsletter = ResolveNewsletter(section, rejects);
         var comments = BuildRemark42(section.Remark42, rejects);

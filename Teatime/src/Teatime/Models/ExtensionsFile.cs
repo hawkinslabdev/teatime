@@ -16,6 +16,7 @@ public sealed class ExtensionsSection
     public MedamaOptions? Medama { get; set; }
     public GoatCounterOptions? GoatCounter { get; set; }
     public LiwanOptions? Liwan { get; set; }
+    public UmamiOptions? Umami { get; set; }
     public Remark42Options? Remark42 { get; set; }
     public BeaconOptions? Beacon { get; set; }
     public ListmonkOptions? Listmonk { get; set; }
@@ -185,4 +186,19 @@ public sealed class LiwanOptions
 
     /// <summary>Entity id configured in Liwan for this site.</summary>
     public string? Entity { get; set; }
+}
+
+/// <summary>Umami analytics, hosted (Umami Cloud) or self-hosted.</summary>
+public sealed class UmamiOptions
+{
+    public bool Enabled { get; set; }
+
+    /// <summary>Base URL of the Umami instance, e.g. <c>https://umami.example.com</c> or <c>https://cloud.umami.is</c>.</summary>
+    public string? Url { get; set; }
+
+    /// <summary>Website id (UUID) from the Umami dashboard.</summary>
+    public string? WebsiteId { get; set; }
+
+    /// <summary>Also load <c>recorder.js</c> for session replays and heatmaps (Umami 3.1+).</summary>
+    public bool Recorder { get; set; }
 }

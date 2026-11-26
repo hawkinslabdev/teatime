@@ -29,6 +29,7 @@ The following extensions are supported:
 | [Medama](#analytics) | Analytics, self-hosted | `url` |
 | [GoatCounter](#analytics) | Analytics, hosted or self-hosted | `url` |
 | [Liwan](#analytics) | Analytics, self-hosted | `url`, `entity` |
+| [Umami](#analytics) | Analytics, hosted or self-hosted | `url`, `websiteId` |
 
 Extensions are disabled by default. To enable an extension, set `enabled` to true and make sure its settings pass validation.
 
@@ -277,7 +278,7 @@ Remark42's embed runs in an iframe, so its origin is added to `frame-src` alongs
 
 ## Analytics
 
-Five providers are available, and enabling more than one at a time works fine:
+Six providers are available, and enabling more than one at a time works fine:
 
 ```json [content/extensions.json]
 {
@@ -303,6 +304,12 @@ Five providers are available, and enabling more than one at a time works fine:
       "enabled": true,
       "url": "https://liwan.example.com",
       "entity": "my-website"
+    },
+    "umami": {
+      "enabled": true,
+      "url": "https://umami.example.com",
+      "websiteId": "c37c5f51-90ad-49e8-90ac-ef5da75e6ab6",
+      "recorder": false
     }
   }
 }
@@ -328,7 +335,11 @@ Five providers are available, and enabling more than one at a time works fine:
 `url` points at your own Liwan instance, and `entity` names the site inside it. The tracker is served from your docs origin, so its reporting endpoint is set to `url` + `/api/event` for you.
 :::
 
-Cookies are worth a thought before you publish. Plausible, Medama and GoatCounter are cookieless by design, and Matomo is loaded with `disableCookies` on for the same reason. That usually keeps you clear of a consent banner. Set `"disableCookies": false` if your setup needs them, and adding a consent flow then becomes your call.
+::: details Umami
+`url` points at your own instance, or at `https://cloud.umami.is` for Umami Cloud. `websiteId` is the UUID from the website's settings in Umami. Set `recorder` to true to also load `recorder.js`, which adds session replays and heatmaps on Umami 3.1 or later. It runs alongside the tracker, never instead of it.
+:::
+
+Cookies are worth a thought before you publish. Plausible, Medama, GoatCounter and Umami are cookieless by design, and Matomo is loaded with `disableCookies` on for the same reason. That usually keeps you clear of a consent banner. Set `"disableCookies": false` if your setup needs them, and adding a consent flow then becomes your call.
 
 ::: Warning
 Each verified origin is folded into the page's `script-src`, `connect-src`, and `img-src` automatically, and the tracker tags carry the same nonce as the rest of the page. If you override `Docs:ContentSecurityPolicy` in `appsettings.json`, your policy is widened the same way.

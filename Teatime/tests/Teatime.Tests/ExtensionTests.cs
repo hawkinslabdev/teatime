@@ -158,6 +158,26 @@ public sealed class ExtensionLoaderTests : IDisposable
     }
 
     [Fact]
+    public void Umami_WithRecorder_LoadsTrackerAndRecorder()
+    {
+        var set = Load("""
+            { "extensions": { "umami": { "enabled": true, "url": "https://umami.example.com", "websiteId": "c37c5f51-90ad-49e8-90ac-ef5da75e6ab6", "recorder": true } } }
+            """);
+
+        var extension = Assert.Single(set.Active);
+        Assert.Equal(["https://umami.example.com/script.js", "https://umami.example.com/recorder.js"], extension.Scripts.Select(s => s.Src));
+        Assert.All(extension.Scripts, s => Assert.Contains(new KeyValuePair<string, string>("data-website-id", "c37c5f51-90ad-49e8-90ac-ef5da75e6ab6"), s.Attributes!));
+    }
+
+    [Fact]
+    public void Umami_WithoutUuidWebsiteId_StaysInactive()
+    {
+        Assert.True(Load("""
+            { "extensions": { "umami": { "enabled": true, "url": "https://umami.example.com", "websiteId": "\" onload=\"x" } } }
+            """).IsEmpty);
+    }
+
+    [Fact]
     public void GoatCounter_WithUrl_Activates()
     {
         var set = Load("""
